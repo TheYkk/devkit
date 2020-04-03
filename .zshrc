@@ -7,14 +7,11 @@ ZSH_THEME="spaceship"
 ZSH_DISABLE_COMPFIX="true"
 plugins=(  git
   node
-  npm
-  gem
-  vscode
-  gulp
   extract
   go 
   fzf
   golang
+  gitignore
   git-extras 
   git-flow
   docker 
@@ -55,6 +52,9 @@ alias dx='docker exec -i -t'
 alias gc='_git_dbg commit -S -v -s'
 alias gdc='_git_dbg diff --cached'
 alias git='hub'
+function gitnew (){
+  _git_dbg remote add theykk git@github.com:theykk/$1.git
+}
 alias gpp='_git_dbg push theykk HEAD && hub pull-request --browse'
 alias gpah='_git_dbg push theykk HEAD'
 alias glah='_git_dbg pull theykk HEAD'
@@ -75,7 +75,6 @@ alias pret='yarn add -D eslint-plugin-import eslint-config-airbnb eslint-config-
 alias genpass='tr -cd "[:alnum:]" < /dev/urandom | fold -w16 | head -n1'
 alias genpass2='</dev/urandom tr -dc "'"12345\!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB"'" | head -c16; echo ""'
 alias mkcd='{ IFS= read -r d && mkdir "$d" && cd "$_"; } <<<'
-alias gco="git config --global"
 alias l='ls -lF'
 alias dir='ls'
 alias la='ls -lah'

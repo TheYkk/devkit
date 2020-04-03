@@ -41,8 +41,11 @@ if [[ -f "$SSH_CONFIG" ]]; then
 	rm "$SSH_CONFIG"
 fi
 ln -s "$SCRIPT_DIR/ssh_config" "$SSH_CONFIG"
+ln -s "$SCRIPT_DIR/.gitmessage" "$HOME/.gitmessage"
+ln -s "$SCRIPT_DIR/.gitignore_global" "$HOME/.gitignore_global"
 
 git config --global core.editor "code --wait"
+git config --global commit.template=~/.gitmessage
 git config --global core.excludesfile ~/.gitignore_global
 
 # use vscode as the editor
