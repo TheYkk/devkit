@@ -57,6 +57,7 @@ function gitnew (){
 }
 alias gpp='_git_dbg push theykk HEAD && hub pull-request --browse'
 alias gpah='_git_dbg push theykk HEAD'
+alias gpall='_git_dbg push theykk --tags && _git_dbg push theykk --all'
 alias glah='_git_dbg pull theykk HEAD'
 alias gfah='_git_dbg fetch theykk'
 alias glom='_git_dbg pull origin master --tags'
@@ -225,6 +226,9 @@ transfer() {
 
     # cleanup
     rm -f $tmpfile
+}
+function gittest(){
+  _git_dbg clone --depth=1 $0 $HOME/Projects/testes/
 }
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases

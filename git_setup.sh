@@ -1,15 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-EMAIL_1="yusufkaan142"
-EMAIL_2="gmail.com"
-
 set -x
 
 # author
 git config --global user.name "Kaan Karakaya"
-git config --global user.email "${EMAIL_1}@${EMAIL_2}"
+git config --global user.signingkey "E6F0EE2E61D33FDD"
+git config --global user.email "yusufkaan142@gmail.com"
 
 # use https remotes and osxkeychain for creds
 git config --global url.git\@github\.com\:.pushInsteadOf https://github.com/
@@ -45,7 +42,8 @@ ln -s "$SCRIPT_DIR/.gitmessage" "$HOME/.gitmessage"
 ln -s "$SCRIPT_DIR/.gitignore_global" "$HOME/.gitignore_global"
 
 git config --global core.editor "code --wait"
-git config --global commit.template=~/.gitmessage
+git config --global commit.template ~/.gitmessage
+git config --global commit.gpgsign true
 git config --global core.excludesfile ~/.gitignore_global
 
 # use vscode as the editor
