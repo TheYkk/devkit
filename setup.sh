@@ -116,5 +116,9 @@ mv ./skm /usr/local/bin
 # ? Generate ssh key
 skm c new_dev -b 4096 -C yusufkaan142@gmail.com
 
+curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
+chmod +x skaffold
+sudo mv skaffold /usr/local/bin
+
 curl https://raw.githubusercontent.com/so-fancy/diff-so-fancy/master/third_party/build_fatpack/diff-so-fancy > /usr/local/bin/diff-so-fancy
 chmod +x /usr/local/bin/*

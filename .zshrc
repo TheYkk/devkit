@@ -33,7 +33,9 @@ export PATH=$PATH:$HOME/.wasme/bin
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
-export REACT_EDITOR=code
+export REACT_EDITOR="code --wait"
+export EDITOR="code --wait"
+
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 alias ..='cd ..'
@@ -68,6 +70,7 @@ alias gbv="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %
 unalias grv
 
 alias zhr='code ~/.zshrc'
+alias tool='code ~/TOOL'
 alias ac='code .'
 alias zhh='code ~/.zsh_history'
 alias hm='code ~/Homestead/Homestead.yaml'
@@ -96,16 +99,16 @@ alias pg='ps ax | grep -v "grep" | grep'
 alias RNT='cd ~/Projects/Rentover/'
 
 # ? Kubernetes
-alias kcex='kubectl explain'
-alias pka='pbpaste | kubectl apply -f-'
-alias pkr='pbpaste | kubectl delete -f-'
-alias pkd='pbpaste | kubectl describe -f-'
-alias kpl='kubectl plugin'
-alias krew_install_clipboard='kubectl krew install --manifest <(pbpaste)'
-alias kk='kubectl krew'
+alias kcex='_kubectl_dbg explain'
+alias pka='pbpaste | _kubectl_dbg apply -f-'
+alias pkr='pbpaste | _kubectl_dbg delete -f-'
+alias pkd='pbpaste | _kubectl_dbg describe -f-'
+alias kpl='_kubectl_dbg plugin'
+alias krew_install_clipboard='_kubectl_dbg krew install --manifest <(pbpaste)'
+alias kk='_kubectl_dbg krew'
 alias kx="kubectx"
 alias kn="kubens"
-alias kca='f(){ kubectl "$@" -A -o wide;  unset -f f; }; f'
+alias kca='f(){ _kubectl_dbg "$@" -A -o wide;  unset -f f; }; f'
 function kmerge() {
   KUBECONFIG=~/.kube/config:$1 kubectl config view --flatten > ~/.kube/mergedkub && mv ~/.kube/mergedkub ~/.kube/config
 }
@@ -120,8 +123,6 @@ alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html"
 alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer && echo "http://localhost:9000"'
 alias drm="docker rm -f $(docker ps -aq)"
 alias notary="notary -s https://notary.theykk.com -d ~/.docker/trust"
-# ? Install programs
-alias install_helm='curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash'
 
 # ? Vmware 
 alias dev_mount='sudo vmhgfs-fuse .host:/Dev_ubuntu /home/ykk/Dev -o allow_other -o uid=1000'
@@ -131,26 +132,15 @@ alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/c
 dive(){
     docker run --rm -it  -v /var/run/docker.sock:/var/run/docker.sock  -e DOCKER_API_VERSION=1.37    wagoodman/dive:latest "$1"
 }
-codem() {
-    if [ -z "$1" ]
-    then
-        echo "No argument supplied"
-        docker run -d -p 8443:8443 -v "${PWD}:/home/coder/project" --rm codercom/code-server --allow-http --no-auth
-    elif [ "$2" ] 
-    then
-        docker run -d -p 8443:8443 -v "$1:/home/coder/project" --rm codercom/code-server --allow-http --no-auth
-    else
-        docker run -d -p 8443:8443 -v "${PWD}/$1:/home/coder/project" --rm codercom/code-server --allow-http --no-auth
-    fi
-}
 
 kr() {
     set -x;
     image="$1"
     shift
-    kubectl run --rm --restart=Never --image-pull-policy=IfNotPresent -i -t \
+    kubectl run --rm --restart=Never --image-pull-policy=IfNotPresent -it \
     	--image="${image}" tmp-"${RANDOM}" $@
 }
+
 portkill() {
   ps="$(lsof -t -i:"$1")"
   if [[ -z "$ps" ]]; then
@@ -176,64 +166,13 @@ _kubectl_dbg() {
   echo >&2 "$(tput setaf 1)+ kubectl $@$(tput sgr0)"
   kubectl "$@"
 }
-transfer() { 
-    curl --version 2>&1 > /dev/null
-    if [ $? -ne 0 ]; then
-    echo "Could not find curl."
-    return 1
-    fi
-    # check arguments
-    if [ $# -eq 0 ]; 
-    then 
-        echo "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md"
-        return 1
-    fi
 
-    # get temporarily filename, output is written to this file show progress can be showed
-    tmpfile=$( mktemp -t transferXXX )
-    
-    # upload stdin or file
-    file=$1
-
-    if tty -s; 
-    then 
-        basefile=$(basename "$file" | sed -e 's/[^a-zA-Z0-9._-]/-/g') 
-
-        if [ ! -e $file ];
-        then
-            echo "File $file doesn't exists."
-            return 1
-        fi
-        
-        if [ -d $file ];
-        then
-            # zip directory and transfer
-            zipfile=$( mktemp -t transferXXX.zip )
-            cd $(dirname $file) && zip -r -q - $(basename $file) >> $zipfile
-            curl --progress-bar --upload-file "$zipfile" "https://transfer.sh/$basefile.zip" >> $tmpfile
-            rm -f $zipfile
-        else
-            # transfer file
-            curl --progress-bar --upload-file "$file" "https://transfer.sh/$basefile" >> $tmpfile
-        fi
-    else 
-        # transfer pipe
-        curl --progress-bar --upload-file "-" "https://transfer.sh/$file" >> $tmpfile
-    fi
-   
-    # cat output link
-    cat $tmpfile
-
-    # cleanup
-    rm -f $tmpfile
-}
 function gittest(){
   _git_dbg clone --depth=1 $0 $HOME/Projects/testes/
 }
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases
 function k() { echo "+ kubectl $@"; command kubectl $@; }
-source =$HOME/gitflow/git-flow-completion.zsh
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+source $HOME/gitflow/git-flow-completion.zsh
 source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
-setopt HIST_IGNORE_SPACE
