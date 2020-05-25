@@ -1,20 +1,20 @@
 export ZSH=$HOME/.oh-my-zsh
 
-export UPDATE_ZSH_DAYS=14
-export DISABLE_UPDATE_PROMPT=true
+# export UPDATE_ZSH_DAYS=14
+# export DISABLE_UPDATE_PROMPT=true
 
 ZSH_THEME="spaceship"
 ZSH_DISABLE_COMPFIX="true"
 plugins=(  git
-  node
+  # node
   extract
-  go 
+  # go 
   fzf
   golang
   gitignore
   git-extras 
   git-flow
-  docker 
+  # docker 
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
@@ -45,7 +45,10 @@ alias ...='cd ../..'
 alias c='clear'
 alias h='cd ~'
 alias dc='docker-compose '
-alias dbuild='DOCKER_BUILDKIT=1 docker build . '
+function dbuild(){
+  DOCKER_BUILDKIT=1 docker build . -t $1
+  docker push $1
+}
 alias d='docker'
 alias dr='docker run --rm -i -t'
 alias dx='docker exec -i -t'
@@ -71,6 +74,7 @@ unalias grv
 
 alias zhr='code ~/.zshrc'
 alias tool='code ~/TOOL'
+alias scode='sudo code --user-data-dir="/home/ykk/.config/Code" --extensions-dir="/home/ykk/.vscode/extensions"'
 alias ac='code .'
 alias zhh='code ~/.zsh_history'
 alias hm='code ~/Homestead/Homestead.yaml'
@@ -78,6 +82,8 @@ alias pret='yarn add -D eslint-plugin-import eslint-config-airbnb eslint-config-
 
 alias genpass='tr -cd "[:alnum:]" < /dev/urandom | fold -w16 | head -n1'
 alias genpass2='</dev/urandom tr -dc "'"12345\!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB"'" | head -c16; echo ""'
+alias genpass4='</dev/urandom tr -dc "'"A-Za-z0-9!#$%&'()*+,-./:;<=>?@[\]^_{|}~"'" | head -c 24  ; echo'
+alias genpass3='tr -cd "[:alnum:]" < /dev/urandom | fold -w32 | head -n1'
 alias mkcd='{ IFS= read -r d && mkdir "$d" && cd "$_"; } <<<'
 alias l='ls -lF'
 alias dir='ls'
@@ -119,13 +125,14 @@ alias http='docker run -ti --rm --network host alpine/httpie'
 alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-node:12 sh'
 alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
 alias noded8='docker run -ti --rm --network host  -v "${PWD}:/app"  node:8 sh'
-alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html" wyveo/nginx-php-fpm:latest bash'
+alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html" theykk.com/php:v1 bash'
 alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer && echo "http://localhost:9000"'
-alias drm="docker rm -f $(docker ps -aq)"
+# alias drm="docker rm -f $(docker ps -aq)"
 alias notary="notary -s https://notary.theykk.com -d ~/.docker/trust"
 
 # ? Vmware 
-alias dev_mount='sudo vmhgfs-fuse .host:/Dev_ubuntu /home/ykk/Dev -o allow_other -o uid=1000'
+alias dev_mount='sudo vmhgfs-fuse .host:/DEV /home/ykk/DEV -o allow_other -o uid=1000'
+alias dev_mount2='sudo vmhgfs-fuse .host:/Dev_ubuntu /home/ykk/Dev2 -o allow_other -o uid=1000'
 alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/cli:latest"
 
 # ? Functions
@@ -176,3 +183,8 @@ function k() { echo "+ kubectl $@"; command kubectl $@; }
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 source $HOME/gitflow/git-flow-completion.zsh
 source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
+export KUBECONFIG=$HOME"/.kube/config"
+# for i in $(find . -type f -name $HOME"/.kube/configs/*.yaml"); do
+#   export KUBECONFIG=$KUBECONFIG:$HOME"/.kube/configs/$(basename $i)"
+# done
+export KUBECONFIG=$KUBECONFIG:$HOME"/.kube/configs/net.trylang.yaml"
