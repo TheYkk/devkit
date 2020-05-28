@@ -20,15 +20,18 @@ plugins=(  git
 )
 
 source $ZSH/oh-my-zsh.sh
+source ~/.kaan.sh
 
-export GOROOT=/snap/go/current
-export GOPATH=$HOME/go:$HOME/dev
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 export PATH="$PATH:$(yarn global bin):$HOME/.fzf/:$HOME/.config/composer/vendor/bin"
 export ANDROID_HOME=$HOME/Android/Sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:/usr/local/bin/istio-1.5.0/bin
 export PATH=$PATH:$HOME/.wasme/bin
+export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:$HOME/scripts
+export PATH=$PATH:$HOME/scripts/bashs
+export PATH=$PATH:$HOME/scripts/pythons
+export PATH=$PATH:/usr/local/go/bin
+
 
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
@@ -74,7 +77,7 @@ unalias grv
 
 alias zhr='code ~/.zshrc'
 alias tool='code ~/TOOL'
-alias scode='sudo code --user-data-dir="/home/ykk/.config/Code" --extensions-dir="/home/ykk/.vscode/extensions"'
+alias scode='sudo code --user-data-dir="/home/kaan/.config/Code" --extensions-dir="/home/kaan/.vscode/extensions"'
 alias ac='code .'
 alias zhh='code ~/.zsh_history'
 alias hm='code ~/Homestead/Homestead.yaml'
@@ -101,7 +104,7 @@ alias pp='pbpaste'
 alias pt='pbpaste | tee'
 alias t='tee'
 alias pg='ps ax | grep -v "grep" | grep'
-
+alias py3='python3'
 alias RNT='cd ~/Projects/Rentover/'
 
 # ? Kubernetes
@@ -131,8 +134,8 @@ alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.
 alias notary="notary -s https://notary.theykk.com -d ~/.docker/trust"
 
 # ? Vmware 
-alias dev_mount='sudo vmhgfs-fuse .host:/DEV /home/ykk/DEV -o allow_other -o uid=1000'
-alias dev_mount2='sudo vmhgfs-fuse .host:/Dev_ubuntu /home/ykk/Dev2 -o allow_other -o uid=1000'
+alias dev_mount='sudo vmhgfs-fuse .host:/DEV /home/kaan/DEV -o allow_other -o uid=1000'
+alias dev_mount2='sudo vmhgfs-fuse .host:/Dev_ubuntu /home/kaan/Dev2 -o allow_other -o uid=1000'
 alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/cli:latest"
 
 # ? Functions
@@ -181,10 +184,18 @@ function gittest(){
 [ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases
 function k() { echo "+ kubectl $@"; command kubectl $@; }
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-source $HOME/gitflow/git-flow-completion.zsh
+# source $HOME/gitflow/git-flow-completion.zsh
 source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
 export KUBECONFIG=$HOME"/.kube/config"
 # for i in $(find . -type f -name $HOME"/.kube/configs/*.yaml"); do
 #   export KUBECONFIG=$KUBECONFIG:$HOME"/.kube/configs/$(basename $i)"
 # done
 export KUBECONFIG=$KUBECONFIG:$HOME"/.kube/configs/net.trylang.yaml"
+function gi() { curl -sLw n https://www.gitignore.io/api/$@ ;}
+
+
+# scripts
+
+alias weather="py3 /home/kaan/scripts/pythons/weather.py"
+alias net="py3 /home/kaan/scripts/pythons/net.py"
+alias scs="code /home/kaan/scripts"
