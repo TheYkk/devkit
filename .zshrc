@@ -4,6 +4,7 @@ export ZSH=$HOME/.oh-my-zsh
 # export DISABLE_UPDATE_PROMPT=true
 
 ZSH_THEME="spaceship"
+SPACESHIP_KUBECTL_SHOW="true"
 ZSH_DISABLE_COMPFIX="true"
 plugins=(  git
   # node
@@ -31,6 +32,7 @@ export PATH=$PATH:$HOME/scripts
 export PATH=$PATH:$HOME/scripts/bashs
 export PATH=$PATH:$HOME/scripts/pythons
 export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$(go env GOPATH)/bin
 
 
 export PATH=$PATH:$ANDROID_HOME/tools
@@ -38,23 +40,34 @@ export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export REACT_EDITOR="code --wait"
 export EDITOR="code --wait"
-
+export GOSUMDB=off
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
+alias cp="cp -iv" 
+alias mv="mv -iv" 
+alias rm="rm -vI" 
+alias apt="sudo apt" 
+alias mkdir="mkdir -pv" 
 alias ..='cd ..'
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
 alias ...='cd ../..'
 alias c='clear'
 alias h='cd ~'
+alias cm='chmod +x *.sh'
 alias dc='docker-compose '
 function dbuild(){
-  DOCKER_BUILDKIT=1 docker build . -t $1
+  DOCKER_BUILDKIT=1 docker build . -t $@
   docker push $1
 }
 alias d='docker'
 alias dr='docker run --rm -i -t'
 alias dx='docker exec -i -t'
+
+#APTpo
+alias api="sudo apt install -y "
+alias apr="sudo apt remove -y "
+alias apa="sudo apt autoremove -y "
 
 # git aliases
 alias gc='_git_dbg commit -S -v -s'
@@ -66,6 +79,7 @@ function gitnew (){
 alias gpp='_git_dbg push theykk HEAD && hub pull-request --browse'
 alias gpah='_git_dbg push theykk HEAD'
 alias gpall='_git_dbg push theykk --tags && _git_dbg push theykk --all'
+alias gpll='_git_dbg push origin --tags && _git_dbg push origin --all'
 alias glah='_git_dbg pull theykk HEAD'
 alias gfah='_git_dbg fetch theykk'
 alias glom='_git_dbg pull origin master --tags'
@@ -75,14 +89,19 @@ alias gpoh='_git_dbg push origin HEAD'
 alias gbv="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 unalias grv
 
+# Vs Code Alias
 alias zhr='code ~/.zshrc'
-alias tool='code ~/TOOL'
+alias kaan='code ~/.kaan.sh'
+alias devkit='code ~/devkit'
+alias loc='code ~/.local'
+alias scs="code ~/scripts"
 alias scode='sudo code --user-data-dir="/home/kaan/.config/Code" --extensions-dir="/home/kaan/.vscode/extensions"'
 alias ac='code .'
 alias zhh='code ~/.zsh_history'
-alias hm='code ~/Homestead/Homestead.yaml'
+
 alias pret='yarn add -D eslint-plugin-import eslint-config-airbnb eslint-config-prettier eslint eslint-plugin-jsx-a11y eslint-plugin-prettier eslint-plugin-react eslint-plugin-react-hooks prettier'
 
+#Password tools
 alias genpass='tr -cd "[:alnum:]" < /dev/urandom | fold -w16 | head -n1'
 alias genpass2='</dev/urandom tr -dc "'"12345\!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB"'" | head -c16; echo ""'
 alias genpass4='</dev/urandom tr -dc "'"A-Za-z0-9!#$%&'()*+,-./:;<=>?@[\]^_{|}~"'" | head -c 24  ; echo'
@@ -90,23 +109,19 @@ alias genpass3='tr -cd "[:alnum:]" < /dev/urandom | fold -w32 | head -n1'
 alias mkcd='{ IFS= read -r d && mkdir "$d" && cd "$_"; } <<<'
 alias l='ls -lF'
 alias dir='ls'
-alias la='ls -lah'
-alias ll='ls -l'
-alias ls-l='ls -l'
+alias ll='ls -lah'
 alias j='jobs'
-alias time='gtime --format "$(tput setab 255)$(tput setaf 160)took %es.$(tput sgr0)"'
 alias vi='vim'
 alias grep='grep -E --color'
 alias ping='ping -c 3'
-alias pstree='pstree'
 alias pc='pbcopy'
 alias pp='pbpaste'
 alias pt='pbpaste | tee'
 alias t='tee'
 alias pg='ps ax | grep -v "grep" | grep'
 alias py3='python3'
-alias RNT='cd ~/Projects/Rentover/'
-
+alias open='xdg-open'
+alias fs='du -h --max-depth=1 | sort -hr'
 # ? Kubernetes
 alias kcex='_kubectl_dbg explain'
 alias pka='pbpaste | _kubectl_dbg apply -f-'
@@ -123,9 +138,12 @@ function kmerge() {
 }
 
 # ? Docker shortcuts
-alias pgadmin="docker run --rm --network host -p 8084:80 -e 'PGADMIN_DEFAULT_EMAIL=user@domain.com' -e 'PGADMIN_DEFAULT_PASSWORD=SuperSecret' -d dpage/pgadmin4"
+alias pgadmin="docker run --rm --network host  -e 'PGADMIN_DEFAULT_EMAIL=ykk@ykk.ykk' -e 'PGADMIN_DEFAULT_PASSWORD=ykk' -d dpage/pgadmin4&& echo http://localhost:8084"
 alias http='docker run -ti --rm --network host alpine/httpie'
+alias alpp='docker run -ti --rm alpine:3.12'
+alias htpasswd='docker run -ti --rm theykk/htpasswd'
 alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-node:12 sh'
+alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.14-alpine sh'
 alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
 alias noded8='docker run -ti --rm --network host  -v "${PWD}:/app"  node:8 sh'
 alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html" theykk.com/php:v1 bash'
@@ -139,6 +157,18 @@ alias dev_mount2='sudo vmhgfs-fuse .host:/Dev_ubuntu /home/kaan/Dev2 -o allow_ot
 alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/cli:latest"
 
 # ? Functions
+
+upload(){
+  gpg -ac -o- $1  |curl -X PUT --upload-file "-" https://transfer.sh/encrypted.txt
+}
+
+download(){
+  timestamp=$(date +%s)
+
+  curl $1 | gpg -d -o decrypted_${timestamp}.txt
+
+}
+
 dive(){
     docker run --rm -it  -v /var/run/docker.sock:/var/run/docker.sock  -e DOCKER_API_VERSION=1.37    wagoodman/dive:latest "$1"
 }
@@ -177,6 +207,18 @@ _kubectl_dbg() {
   kubectl "$@"
 }
 
+
+b64d(){
+  echo "$1" | base64 -d ; echo
+}
+
+b64(){
+  echo "$1" | base64 -w 0 ; echo
+}
+
+function run(){
+  $0 & disown
+}
 function gittest(){
   _git_dbg clone --depth=1 $0 $HOME/Projects/testes/
 }
@@ -186,16 +228,35 @@ function k() { echo "+ kubectl $@"; command kubectl $@; }
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # source $HOME/gitflow/git-flow-completion.zsh
 source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
-export KUBECONFIG=$HOME"/.kube/config"
-# for i in $(find . -type f -name $HOME"/.kube/configs/*.yaml"); do
-#   export KUBECONFIG=$KUBECONFIG:$HOME"/.kube/configs/$(basename $i)"
-# done
-export KUBECONFIG=$KUBECONFIG:$HOME"/.kube/configs/net.trylang.yaml"
+unset KUBECONFIG
+for i in ~/.kube/configs/*.yaml; do
+  export KUBECONFIG=$KUBECONFIG:$i
+done
+# export KUBECONFIG=$KUBECONFIG:$HOME":/.kube/configs/net.trylang.yaml:/.kube/configs/com.theykk.yaml"
 function gi() { curl -sLw n https://www.gitignore.io/api/$@ ;}
-
+watch () {
+    IN=2
+    case $1 in
+        -n)
+            IN=$2
+            shift 2
+            ;;
+    esac
+    printf '\033c' # clear
+    CM="$*"
+    LEFT="$(printf 'Every %.1f: %s' $IN $CM)"
+    ((PAD = COLUMNS - ${#LEFT}))
+    while :
+    do
+        DT=$(date)
+        printf "$LEFT%${PAD}s\n" "$HOST $(date)"
+        eval "$CM"
+        sleep $IN
+        printf '\033c'
+    done
+}
 
 # scripts
 
 alias weather="py3 /home/kaan/scripts/pythons/weather.py"
 alias net="py3 /home/kaan/scripts/pythons/net.py"
-alias scs="code /home/kaan/scripts"
