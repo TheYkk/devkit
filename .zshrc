@@ -26,13 +26,19 @@ source ~/.kaan.sh
 export PATH="$PATH:$(yarn global bin):$HOME/.fzf/:$HOME/.config/composer/vendor/bin"
 export ANDROID_HOME=$HOME/Android/Sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH=$PATH:$HOME/.wasme/bin
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/scripts
 export PATH=$PATH:$HOME/scripts/bashs
 export PATH=$PATH:$HOME/scripts/pythons
 export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:/usr/local/include
 export PATH=$PATH:$(go env GOPATH)/bin
+export DENO_INSTALL="/home/kaan/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
 
 
 export PATH=$PATH:$ANDROID_HOME/tools
@@ -42,7 +48,8 @@ export REACT_EDITOR="code --wait"
 export EDITOR="code --wait"
 export GOSUMDB=off
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-
+export PATH=$PATH:/home/kaan/.linkerd2/bin
+HEIGHT=$(tput lines)
 alias cp="cp -iv" 
 alias mv="mv -iv" 
 alias rm="rm -vI" 
@@ -61,7 +68,7 @@ function dbuild(){
   docker push $1
 }
 alias d='docker'
-alias dr='docker run --rm -i -t'
+alias dr='docker run --rm -it'
 alias dx='docker exec -i -t'
 
 #APTpo
@@ -180,7 +187,11 @@ kr() {
     kubectl run --rm --restart=Never --image-pull-policy=IfNotPresent -it \
     	--image="${image}" tmp-"${RANDOM}" $@
 }
-
+delete_ns() {
+  kubectl get namespace "$@" -o json \
+            | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" \
+            | kubectl replace --raw /api/v1/namespaces/$@/finalize -f -
+}
 portkill() {
   ps="$(lsof -t -i:"$1")"
   if [[ -z "$ps" ]]; then
@@ -215,19 +226,50 @@ b64d(){
 b64(){
   echo "$1" | base64 -w 0 ; echo
 }
+FZF_LINES=`expr $HEIGHT - 1`
+function del () {
+	clear; tput cup $(($(tput lines)/3)); tput bold
+	set -f
+	clear; printf "%s\n\t" "$@"
+  tput sgr0
+	printf "delete?[y/N]: "
+	read ans
+	[ $ans = "y" ] && rm -rf $@
+}
 
-function run(){
-  $0 & disown
+function mov() {
+	clear; tput cup $(($(tput lines)/3)); tput bold
+	set -f
+	clear; echo "Move to where?"
+	dest="$(find * -type d | grep -v '.git' |grep -v '.cache'| fzf --height $FZF_LINES)" &&
+	for x in $@; do
+		eval mv -iv \"$x\" \"$dest\"
+	done &&
+	notify "🚚 File(s) moved." "File(s) moved to $dest." 5000  > /dev/null
 }
-function gittest(){
-  _git_dbg clone --depth=1 $0 $HOME/Projects/testes/
+
+function cop() {
+	clear; tput cup $(($(tput lines)/3)); tput bold
+	set -f
+	clear; echo "Copy to where?"
+	dest="$(find * -type d | grep -v '.git' |grep -v '.cache'| fzf --height $FZF_LINES)" &&
+	for x in $@; do
+		eval cp -ivr \"$x\" \"$dest\"
+	done &&
+	notify "📋 File(s) copied." "File(s) copies to $dest." 5000  > /dev/null
 }
+
+function gt(){
+  _git_dbg clone --depth=1 $1
+}
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases
 function k() { echo "+ kubectl $@"; command kubectl $@; }
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # source $HOME/gitflow/git-flow-completion.zsh
-source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
+# source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
+# source <(k3d completion zsh)  # setup autocomplete in zsh into the current shell
 unset KUBECONFIG
 for i in ~/.kube/configs/*.yaml; do
   export KUBECONFIG=$KUBECONFIG:$i
@@ -260,3 +302,11 @@ watch () {
 
 alias weather="py3 /home/kaan/scripts/pythons/weather.py"
 alias net="py3 /home/kaan/scripts/pythons/net.py"
+# alias mon2cam="deno run --unstable -A -r -q https://raw.githubusercontent.com/ShayBox/Mon2Cam/master/src/mod.ts"
+# alias mon2cam="deno run --unstable -A -r -q https://raw.githubusercontent.com/ShayBox/Mon2Cam/master/src/mod.ts"
+
+# # The next line updates PATH for the Google Cloud SDK.
+# if [ -f '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/path.zsh.inc' ]; then . '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/path.zsh.inc'; fi
+
+# # The next line enables shell command completion for gcloud.
+# if [ -f '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/completion.zsh.inc'; fi
