@@ -61,6 +61,7 @@ alias pbpaste='xclip -selection clipboard -o'
 alias ...='cd ../..'
 alias c='clear'
 alias h='cd ~'
+alias kbuild="kubectl build -c . -d"
 alias cm='chmod +x *.sh'
 alias dc='docker-compose '
 function dbuild(){
@@ -83,7 +84,7 @@ alias git='hub'
 function gitnew (){
   _git_dbg remote add theykk git@github.com:theykk/$1.git
 }
-alias gpp='_git_dbg push theykk HEAD && hub pull-request --browse'
+alias gpp='_git_dbg push theykk HEAD hub pull-request --browse'
 alias gpah='_git_dbg push theykk HEAD'
 alias gpall='_git_dbg push theykk --tags && _git_dbg push theykk --all'
 alias gpll='_git_dbg push origin --tags && _git_dbg push origin --all'
@@ -123,7 +124,7 @@ alias grep='grep -E --color'
 alias ping='ping -c 3'
 alias pc='pbcopy'
 alias pp='pbpaste'
-alias pt='pbpaste | tee'
+
 alias t='tee'
 alias pg='ps ax | grep -v "grep" | grep'
 alias py3='python3'
@@ -148,13 +149,14 @@ function kmerge() {
 alias pgadmin="docker run --rm --network host  -e 'PGADMIN_DEFAULT_EMAIL=ykk@ykk.ykk' -e 'PGADMIN_DEFAULT_PASSWORD=ykk' -d dpage/pgadmin4&& echo http://localhost:8084"
 alias http='docker run -ti --rm --network host alpine/httpie'
 alias alpp='docker run -ti --rm alpine:3.12'
+alias ubb='docker run -ti --rm -v "${PWD}:/app" ubuntu'
 alias htpasswd='docker run -ti --rm theykk/htpasswd'
 alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-node:12 sh'
 alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.14-alpine sh'
 alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
 alias noded8='docker run -ti --rm --network host  -v "${PWD}:/app"  node:8 sh'
 alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html" theykk.com/php:v1 bash'
-alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer && echo "http://localhost:9000"'
+alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer-ce && echo "http://localhost:9000"'
 # alias drm="docker rm -f $(docker ps -aq)"
 alias notary="notary -s https://notary.theykk.com -d ~/.docker/trust"
 
@@ -207,7 +209,9 @@ measure() {
   local tt=$((($(date +%s%N) - $ts)/1000000))
   echo "time took: $tt ms." >&2
 }
-
+pt() {
+  pp > $1
+}
 _git_dbg() {
   echo >&2 "$(tput setaf 1)+ git $@$(tput sgr0)"
   git "$@"
@@ -220,11 +224,11 @@ _kubectl_dbg() {
 
 
 b64d(){
-  echo "$1" | base64 -d ; echo
+  echo -n "$1" | base64 -d ; echo
 }
 
 b64(){
-  echo "$1" | base64 -w 0 ; echo
+  echo -n "$1" | base64 -w 0 ; echo
 }
 FZF_LINES=`expr $HEIGHT - 1`
 function del () {
@@ -241,7 +245,7 @@ function mov() {
 	clear; tput cup $(($(tput lines)/3)); tput bold
 	set -f
 	clear; echo "Move to where?"
-	dest="$(find * -type d | grep -v '.git' |grep -v '.cache'| fzf --height $FZF_LINES)" &&
+	dest="$(find ~/* -type d | grep -v '.git' |grep -v '.cache'| fzf --height $FZF_LINES)" &&
 	for x in $@; do
 		eval mv -iv \"$x\" \"$dest\"
 	done &&
@@ -298,15 +302,10 @@ watch () {
     done
 }
 
+gotest(){
+  go test -v . | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/''
+}
 # scripts
 
 alias weather="py3 /home/kaan/scripts/pythons/weather.py"
 alias net="py3 /home/kaan/scripts/pythons/net.py"
-# alias mon2cam="deno run --unstable -A -r -q https://raw.githubusercontent.com/ShayBox/Mon2Cam/master/src/mod.ts"
-# alias mon2cam="deno run --unstable -A -r -q https://raw.githubusercontent.com/ShayBox/Mon2Cam/master/src/mod.ts"
-
-# # The next line updates PATH for the Google Cloud SDK.
-# if [ -f '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/path.zsh.inc' ]; then . '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/path.zsh.inc'; fi
-
-# # The next line enables shell command completion for gcloud.
-# if [ -f '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/kaan/Work/projects/freelancer/UPWORK/Jan/google-cloud-sdk/completion.zsh.inc'; fi
