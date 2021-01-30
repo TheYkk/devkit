@@ -162,7 +162,6 @@ alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html"
 alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer-ce && echo "http://localhost:9000"'
 alias drm='docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true'
 
-
 # ? Vmware
 alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/cli:latest"
 
