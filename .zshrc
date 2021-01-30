@@ -23,7 +23,7 @@ plugins=(  git
 source $ZSH/oh-my-zsh.sh
 source ~/.kaan.sh
 
-export PATH="$PATH:$(yarn global bin):$HOME/.fzf/:$HOME/.config/composer/vendor/bin"
+export PATH="$PATH:$HOME/.fzf/:$HOME/.config/composer/vendor/bin"
 export ANDROID_HOME=$HOME/Android/Sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/tools
@@ -37,6 +37,7 @@ export PATH=$PATH:$HOME/scripts/pythons
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/usr/local/include
 export PATH=$PATH:$(go env GOPATH)/bin
+export PATH=$PATH:$HOME/.cargo/bin
 export DENO_INSTALL="/home/kaan/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 
@@ -70,6 +71,7 @@ function dbuild(){
 }
 alias d='docker'
 alias dr='docker run --rm -it'
+alias drb='docker run --rm -it --entrypoint sh'
 alias dx='docker exec -i -t'
 
 #APTpo
@@ -107,7 +109,6 @@ alias scode='sudo code --user-data-dir="/home/kaan/.config/Code" --extensions-di
 alias ac='code .'
 alias zhh='code ~/.zsh_history'
 
-alias pret='yarn add -D eslint-plugin-import eslint-config-airbnb eslint-config-prettier eslint eslint-plugin-jsx-a11y eslint-plugin-prettier eslint-plugin-react eslint-plugin-react-hooks prettier'
 
 #Password tools
 alias genpass='tr -cd "[:alnum:]" < /dev/urandom | fold -w16 | head -n1'
@@ -120,11 +121,12 @@ alias dir='ls'
 alias ll='ls -lah'
 alias j='jobs'
 alias vi='vim'
+alias lg="lazygit"
 alias grep='grep -E --color'
 alias ping='ping -c 3'
 alias pc='pbcopy'
 alias pp='pbpaste'
-
+alias cat="batcat"
 alias t='tee'
 alias pg='ps ax | grep -v "grep" | grep'
 alias py3='python3'
@@ -135,14 +137,16 @@ alias kcex='_kubectl_dbg explain'
 alias pka='pbpaste | _kubectl_dbg apply -f-'
 alias pkr='pbpaste | _kubectl_dbg delete -f-'
 alias pkd='pbpaste | _kubectl_dbg describe -f-'
-alias kpl='_kubectl_dbg plugin'
-alias krew_install_clipboard='_kubectl_dbg krew install --manifest <(pbpaste)'
-alias kk='_kubectl_dbg krew'
 alias kx="kubectx"
 alias kn="kubens"
+alias goci="golangci-lint run -v"
 alias kca='f(){ _kubectl_dbg "$@" -A -o wide;  unset -f f; }; f'
 function kmerge() {
   KUBECONFIG=~/.kube/config:$1 kubectl config view --flatten > ~/.kube/mergedkub && mv ~/.kube/mergedkub ~/.kube/config
+}
+
+function pse(){
+  ps -aux | grep $1
 }
 
 # ? Docker shortcuts
@@ -152,17 +156,14 @@ alias alpp='docker run -ti --rm alpine:3.12'
 alias ubb='docker run -ti --rm -v "${PWD}:/app" ubuntu'
 alias htpasswd='docker run -ti --rm theykk/htpasswd'
 alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-node:12 sh'
-alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.14-alpine sh'
+alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.16-alpine sh'
 alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
-alias noded8='docker run -ti --rm --network host  -v "${PWD}:/app"  node:8 sh'
 alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html" theykk.com/php:v1 bash'
 alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer-ce && echo "http://localhost:9000"'
-# alias drm="docker rm -f $(docker ps -aq)"
-alias notary="notary -s https://notary.theykk.com -d ~/.docker/trust"
+alias drm='docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true'
 
-# ? Vmware 
-alias dev_mount='sudo vmhgfs-fuse .host:/DEV /home/kaan/DEV -o allow_other -o uid=1000'
-alias dev_mount2='sudo vmhgfs-fuse .host:/Dev_ubuntu /home/kaan/Dev2 -o allow_other -o uid=1000'
+
+# ? Vmware
 alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/cli:latest"
 
 # ? Functions
@@ -179,7 +180,7 @@ download(){
 }
 
 dive(){
-    docker run --rm -it  -v /var/run/docker.sock:/var/run/docker.sock  -e DOCKER_API_VERSION=1.37    wagoodman/dive:latest "$1"
+    docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive:latest "$1"
 }
 
 kr() {
@@ -274,12 +275,14 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 # source $HOME/gitflow/git-flow-completion.zsh
 # source <(kubectl completion zsh)  # setup autocomplete in zsh into the current shell
 # source <(k3d completion zsh)  # setup autocomplete in zsh into the current shell
-unset KUBECONFIG
-for i in ~/.kube/configs/*.yaml; do
-  export KUBECONFIG=$KUBECONFIG:$i
-done
+function kload(){
+  unset KUBECONFIG
+  for i in ~/.kube/configs/*.yaml; do
+    export KUBECONFIG=$KUBECONFIG:$i
+  done
+}
 # export KUBECONFIG=$KUBECONFIG:$HOME":/.kube/configs/net.trylang.yaml:/.kube/configs/com.theykk.yaml"
-function gi() { curl -sLw n https://www.gitignore.io/api/$@ ;}
+function gi() { wget -O .gitignore https://www.gitignore.io/api/$@}
 watch () {
     IN=2
     case $1 in
@@ -303,9 +306,32 @@ watch () {
 }
 
 gotest(){
-  go test -v . | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/''
+  go test -v ./... | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/''
 }
 # scripts
 
 alias weather="py3 /home/kaan/scripts/pythons/weather.py"
 alias net="py3 /home/kaan/scripts/pythons/net.py"
+# SSH_ENV="$HOME/.ssh/agent-environment"
+
+# function start_agent {
+#     echo "Initialising new SSH agent..."
+#     /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+#     echo succeeded
+#     chmod 600 "${SSH_ENV}"
+#     . "${SSH_ENV}" > /dev/null
+#     /usr/bin/ssh-add;
+# }
+
+# # Source SSH settings, if applicable
+
+# if [ -f "${SSH_ENV}" ]; then
+#     . "${SSH_ENV}" > /dev/null
+#     #ps ${SSH_AGENT_PID} doesn't work under cywgin
+#     ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+#         start_agent;
+#     }
+# else
+#     start_agent;
+# fi
+export FZF_CTRL_T_COMMAND='fdfind --type d --hidden --follow --exclude ".git" . ~/Work'
