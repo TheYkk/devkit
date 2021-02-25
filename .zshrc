@@ -35,9 +35,11 @@ export PATH=$PATH:$HOME/scripts
 export PATH=$PATH:$HOME/scripts/bashs
 export PATH=$PATH:$HOME/scripts/pythons
 export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:/usr/local/bin/v
 export PATH=$PATH:/usr/local/include
 export PATH=$PATH:$(go env GOPATH)/bin
 export PATH=$PATH:$HOME/.cargo/bin
+export PATH=$PATH:$HOME/.cargo/env
 export DENO_INSTALL="/home/kaan/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 
@@ -126,7 +128,7 @@ alias grep='grep -E --color'
 alias ping='ping -c 3'
 alias pc='pbcopy'
 alias pp='pbpaste'
-alias cat="batcat"
+alias bat="batcat"
 alias t='tee'
 alias pg='ps ax | grep -v "grep" | grep'
 alias py3='python3'
@@ -334,3 +336,7 @@ alias net="py3 /home/kaan/scripts/pythons/net.py"
 #     start_agent;
 # fi
 export FZF_CTRL_T_COMMAND='fdfind --type d --hidden --follow --exclude ".git" . ~/Work'
+# z completion
+if [ -f ${HOME}/scripts/bashs/z.sh ]; then
+    . ${HOME}/scripts/bashs/z.sh
+fi
