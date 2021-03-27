@@ -78,3 +78,17 @@ chmod +x /usr/local/bin/*
 apt install aws
 
 apt install flameshot
+
+apt install tmux
+
+apt install neovim
+
+apt install vim
+
+# https://github.com/Blacksuan19/init.nvim
+
+git clone https://github.com/Blacksuan19/init.nvim ~/.config/nvim
+
+wget https://github.com/BurntSushi/ripgrep/releases/download/12.1.1/ripgrep_12.1.1_amd64.deb && dpkg -i ripgrep_12.1.1_amd64.deb
+
+apt install bat

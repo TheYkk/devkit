@@ -37,22 +37,22 @@ export PATH=$PATH:$HOME/scripts/pythons
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/usr/local/bin/v
 export PATH=$PATH:/usr/local/include
+export PATH="$PATH:$(yarn global bin)"
 export PATH=$PATH:$(go env GOPATH)/bin
 export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$PATH:$HOME/.cargo/env
-export DENO_INSTALL="/home/kaan/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
 
 
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export REACT_EDITOR="code --wait"
-export EDITOR="code --wait"
+# export EDITOR="code --wait"
 export GOSUMDB=off
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PATH=$PATH:/home/kaan/.linkerd2/bin
 HEIGHT=$(tput lines)
+export TERM="xterm-256color"
 alias cp="cp -iv" 
 alias mv="mv -iv" 
 alias rm="rm -vI" 
@@ -74,12 +74,18 @@ function dbuild(){
 alias d='docker'
 alias dr='docker run --rm -it'
 alias drb='docker run --rm -it --entrypoint sh'
+alias drbb='docker run --rm -it --entrypoint bash'
 alias dx='docker exec -i -t'
 
 #APTpo
 alias api="sudo apt install -y "
 alias apr="sudo apt remove -y "
 alias apa="sudo apt autoremove -y "
+
+# Rust alias
+
+alias cr="cargo run"
+alias ccc="cargo clippy -Z unstable-options"
 
 # git aliases
 alias gc='_git_dbg commit -S -v -s'
@@ -118,9 +124,10 @@ alias genpass2='</dev/urandom tr -dc "'"12345\!@#$%qwertQWERTasdfgASDFGzxcvbZXCV
 alias genpass4='</dev/urandom tr -dc "'"A-Za-z0-9!#$%&'()*+,-./:;<=>?@[\]^_{|}~"'" | head -c 24  ; echo'
 alias genpass3='tr -cd "[:alnum:]" < /dev/urandom | fold -w32 | head -n1'
 alias mkcd='{ IFS= read -r d && mkdir "$d" && cd "$_"; } <<<'
-alias l='ls -lF'
 alias dir='ls'
 alias ll='ls -lah'
+alias e='exa --long -mghHUu --git --changed --time-style long-iso -@'
+alias es='exa --long -rmghHUu -s=size  --git --changed --time-style long-iso -@'
 alias j='jobs'
 alias vi='vim'
 alias lg="lazygit"
@@ -340,3 +347,4 @@ export FZF_CTRL_T_COMMAND='fdfind --type d --hidden --follow --exclude ".git" . 
 if [ -f ${HOME}/scripts/bashs/z.sh ]; then
     . ${HOME}/scripts/bashs/z.sh
 fi
+export PATH=/home/$USER/.config/nvcode/utils/bin:$PATH
