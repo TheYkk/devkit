@@ -53,6 +53,7 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PATH=$PATH:/home/kaan/.linkerd2/bin
 HEIGHT=$(tput lines)
 export TERM="xterm-256color"
+export BAT_PAGER="less -RF"
 alias cp="cp -iv" 
 alias mv="mv -iv" 
 alias rm="rm -vI" 
@@ -126,8 +127,8 @@ alias genpass3='tr -cd "[:alnum:]" < /dev/urandom | fold -w32 | head -n1'
 alias mkcd='{ IFS= read -r d && mkdir "$d" && cd "$_"; } <<<'
 alias dir='ls'
 alias ll='ls -lah'
-alias e='exa --long -mghHUu --git --changed --time-style long-iso -@'
-alias es='exa --long -rmghHUu -s=size  --git --changed --time-style long-iso -@'
+alias e='exa --long -mghHU --git --changed --time-style long-iso -@'
+alias es='exa --long -rmghHU -s=size  --git --changed --time-style long-iso -@'
 alias j='jobs'
 alias vi='vim'
 alias lg="lazygit"
@@ -161,10 +162,10 @@ function pse(){
 # ? Docker shortcuts
 alias pgadmin="docker run --rm --network host  -e 'PGADMIN_DEFAULT_EMAIL=ykk@ykk.ykk' -e 'PGADMIN_DEFAULT_PASSWORD=ykk' -d dpage/pgadmin4&& echo http://localhost:8084"
 alias http='docker run -ti --rm --network host alpine/httpie'
-alias alpp='docker run -ti --rm alpine:3.12'
 alias ubb='docker run -ti --rm -v "${PWD}:/app" ubuntu'
 alias htpasswd='docker run -ti --rm theykk/htpasswd'
 alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-node:12 sh'
+alias alpp='docker run -ti --rm -v "${PWD}:/app" alpine:3.13 sh'
 alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.16-alpine sh'
 alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
 alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html" theykk.com/php:v1 bash'
