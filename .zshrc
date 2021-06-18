@@ -198,7 +198,7 @@ alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-
 alias alpp='docker run -ti --rm -v "${PWD}:/app" alpine:3.13 sh'
 alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.16-alpine sh'
 alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
-alias phpim='docker run -ti --rm --network host  -v "$PWD:/usr/share/nginx/html" theykk.com/php:v1 bash'
+alias phpim='docker run -ti --rm --network host  -v "$PWD:/app" laravelsail/php80-composer:latest bash'
 alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer-ce && echo "http://localhost:9000"'
 alias drm='docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true'
 alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/cli:latest"
@@ -215,6 +215,15 @@ kmerge() {
 
 pse(){
   ps -aux | grep $1
+}
+
+dbuild(){
+  DOCKER_BUILDKIT=1 docker build . -t $@
+}
+
+dbuildp(){
+  DOCKER_BUILDKIT=1 docker build . -t $@
+  docker push $1
 }
 
 download(){
@@ -318,6 +327,7 @@ cop() {
 
 gt(){
   _git_dbg clone --depth=1 $1
+  cd $(echo $1 | sed 's:.*/::')
 }
 
 function k() { 
@@ -362,7 +372,9 @@ watch () {
 }
 
 listFiles(){
-  fdfind --type f --hidden --follow -E ".git" -E ".cache" -E "vendor" -E "node_modules" . "$HOME" | fzf
+  code $(fdfind --type f --hidden --follow -E ".git" -E ".cache" -E "vendor" -E "node_modules" . "$HOME" | fzf)
+  zle reset-prompt
+  return
 }
 
 gotest(){
@@ -374,5 +386,5 @@ gotest(){
 alias weather="py3 /home/kaan/scripts/pythons/weather.py"
 alias net="py3 /home/kaan/scripts/pythons/net.py"
 
-bindkey "^e" listFiles
 zle -N listFiles
+bindkey "^e" listFiles
