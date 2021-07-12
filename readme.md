@@ -1,4 +1,4 @@
-# TheYkk's ubuntu environment
+# TheYkk's Mac environment
 
 First of all clone my repo
 
