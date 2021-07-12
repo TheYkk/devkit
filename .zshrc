@@ -37,7 +37,6 @@ export PATH=$PATH:$HOME/scripts/pythons
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/usr/local/bin/v
 export PATH=$PATH:/usr/local/include
-export PATH="$PATH:$(yarn global bin)"
 export PATH=$PATH:$(go env GOPATH)/bin
 export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$PATH:$HOME/.cargo/env
@@ -91,9 +90,9 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" 
 
 # ? File and folder
-alias cp="cp -iv" 
-alias mv="mv -iv" 
-alias rm="rm -vI" 
+alias cp="cp -v" 
+alias mv="mv -v" 
+alias rm="rm -v" 
 alias mkdir="mkdir -pv" 
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
@@ -153,6 +152,7 @@ alias zhr='code ~/.zshrc'
 alias kaan='code ~/.kaan.sh'
 alias devkit='code ~/devkit'
 alias loc='code ~/.local'
+alias bff='code ~/.Brewfile'
 alias scs="code ~/scripts"
 alias scode='sudo code --user-data-dir="/home/kaan/.config/Code" --extensions-dir="/home/kaan/.vscode/extensions"'
 alias ac='code .'
@@ -173,7 +173,6 @@ alias grep='grep -E --color'
 alias ping='ping -c 3'
 alias pc='pbcopy'
 alias pp='pbpaste'
-alias bat="batcat"
 alias t='tee'
 alias pg='ps ax | grep -v "grep" | grep'
 alias py3='python3'
@@ -388,3 +387,5 @@ alias net="py3 /home/kaan/scripts/pythons/net.py"
 
 zle -N listFiles
 bindkey "^e" listFiles
+. $(brew --prefix)/etc/profile.d/z.sh
+export GPG_TTY=$(tty)
