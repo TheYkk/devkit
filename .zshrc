@@ -45,7 +45,7 @@ export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-export PATH=$PATH:/home/kaan/.linkerd2/bin
+export PATH=$PATH:/Users/kaan/Documents/jb
 
 export REACT_EDITOR="code --wait"
 # export EDITOR="code --wait"
@@ -70,7 +70,7 @@ export FZF_DEFAULT_OPTS="
 --bind 'ctrl-e:execute(echo {+} | xargs -o vim)'
 --bind 'ctrl-v:execute(code {+})'
 "
-export FZF_CTRL_T_COMMAND='fdfind --type d --hidden --follow --exclude ".git" . ~/Work'
+export FZF_CTRL_T_COMMAND='fd --type d --hidden --follow --exclude ".git" . ~/Work'
 export HISTFILESIZE=1000000000
 export HISTSIZE=1000000000
 setopt EXTENDED_HISTORY
@@ -101,7 +101,6 @@ alias l='exa --classify --grid --icons --group-directories-first --color-scale -
 alias ll='exa --git --group-directories-first --classify --icons --color-scale --color always -laFm'
 alias e='exa --long -mghHU --git --changed --icons --time-style long-iso -@'
 alias es='exa --long -rmghHU -s=size  --git --icons --changed --time-style long-iso -@'
-alias open='xdg-open'
 alias fs='du -h --max-depth=1 | sort -hr'
 
 # ? Move
@@ -157,8 +156,6 @@ alias scs="code ~/scripts"
 alias scode='sudo code --user-data-dir="/home/kaan/.config/Code" --extensions-dir="/home/kaan/.vscode/extensions"'
 alias ac='code .'
 alias zhh='code ~/.zsh_history'
-
-
 # ? Password tools
 alias genpass='tr -cd "[:alnum:]" < /dev/urandom | fold -w16 | head -n1'
 alias genpass2='</dev/urandom tr -dc "'"12345\!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB"'" | head -c16; echo ""'
@@ -371,7 +368,7 @@ watch () {
 }
 
 listFiles(){
-  code $(fdfind --type f --hidden --follow -E ".git" -E ".cache" -E "vendor" -E "node_modules" . "$HOME" | fzf)
+  code $(fd --type f --hidden --follow -E ".git" -E ".cache" -E "vendor" -E "node_modules" . "$HOME" | fzf)
   zle reset-prompt
   return
 }
