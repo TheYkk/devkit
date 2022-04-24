@@ -124,7 +124,6 @@ alias apr="sudo apt remove -y "
 alias apa="sudo apt autoremove -y "
 
 # ? Rust alias
-
 alias cr="cargo run"
 alias ccc="cargo clippy -Z unstable-options"
 
@@ -152,9 +151,10 @@ alias devkit='code ~/devkit'
 alias loc='code ~/.local'
 alias bff='code ~/.Brewfile'
 alias scs="code ~/scripts"
-alias scode='sudo code --user-data-dir="/home/kaan/.config/Code" --extensions-dir="/home/kaan/.vscode/extensions"'
+alias scode='sudo code --user-data-dir="/home/kaan/.config/Code" --extensions-dir="/home/kaan/.vscode/extensions"' # Linux only
 alias ac='code .'
 alias zhh='code ~/.zsh_history'
+
 # ? Password tools
 alias genpass='tr -cd "[:alnum:]" < /dev/urandom | fold -w16 | head -n1'
 alias genpass2='</dev/urandom tr -dc "'"12345\!@#$%qwertQWERTasdfgASDFGzxcvbZXCVB"'" | head -c16; echo ""'
@@ -189,14 +189,14 @@ alias pgadmin="docker run --rm --network host  -e 'PGADMIN_DEFAULT_EMAIL=ykk@ykk
 alias http='docker run -ti --rm --network host alpine/httpie'
 alias ubb='docker run -ti --rm -v "${PWD}:/app" ubuntu'
 alias htpasswd='docker run -ti --rm theykk/htpasswd'
-alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-node:12 sh'
-alias alpp='docker run -ti --rm -v "${PWD}:/app" alpine:3.13 sh'
-alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.16-alpine sh'
-alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
-alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:14 sh'
+alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-node:18 sh'
+alias alpp='docker run -ti --rm -v "${PWD}:/app" alpine:3.15 sh'
+alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.18-alpine sh'
+alias noded18='docker run -ti --rm --network host  -v "${PWD}:/app"  node:18-alpine sh'
+alias node18='docker run -ti --rm --network host  -v "${PWD}:/app"  node:18 sh'
 alias phpim='docker run -ti --rm --network host  -v "$PWD:/app" laravelsail/php80-composer:latest bash'
 alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer-ce && echo "http://localhost:9000"'
-alias drm='docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true'
+alias drm='docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true' # Notworking
 alias civo="docker run -it --rm -v $HOME/.civo.json:/home/user/.civo.json civo/cli:latest"
 
 # ? Functions
@@ -298,7 +298,7 @@ del () {
 	read ans
 	[ $ans = "y" ] && rm -rf $@
 }
-
+# Linux only
 mov() {
 	clear; tput cup $(($(tput lines)/3)); tput bold
 	set -f
@@ -310,6 +310,7 @@ mov() {
 	notify "🚚 File(s) moved." "File(s) moved to $dest." 5000  > /dev/null
 }
 
+# Linux only
 cop() {
 	clear; tput cup $(($(tput lines)/3)); tput bold
 	set -f
@@ -377,10 +378,6 @@ gotest(){
   go test -v ./... | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/''
 }
 
-# ? scripts
-
-alias weather="py3 /home/kaan/scripts/pythons/weather.py"
-alias net="py3 /home/kaan/scripts/pythons/net.py"
 
 zle -N listFiles
 bindkey "^e" listFiles
@@ -388,7 +385,7 @@ export GPG_TTY=$(tty)
 
 ev(){
   rm /Users/kaan/dockers/docker.sock
-  ssh -N -L localhost:2374:/var/run/docker.sock root@157.245.76.142  >/dev/null 2>&1 & 
+  ssh -N -L localhost:2374:/var/run/docker.sock root@$REMOTE_DOCKER  >/dev/null 2>&1 & 
   disown
   # export DOCKER_HOST=unix:///Users/kaan/dockers/docker.sock
 }
