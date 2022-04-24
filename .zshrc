@@ -1,10 +1,13 @@
+# Fig pre block. Keep at the top of this file.
+. "$HOME/.fig/shell/zshrc.pre.zsh"
+# zmodload zsh/zprof
 export ZSH=$HOME/.oh-my-zsh
 
 # export UPDATE_ZSH_DAYS=14
 # export DISABLE_UPDATE_PROMPT=true
 
 ZSH_THEME="spaceship"
-SPACESHIP_KUBECTL_SHOW="true"
+SPACESHIP_KUBECTL_SHOW="false"
 ZSH_DISABLE_COMPFIX="true"
 plugins=(  git
   # node
@@ -24,7 +27,7 @@ source $ZSH/oh-my-zsh.sh
 source ~/.kaan.sh
 
 export PATH="$PATH:$HOME/.fzf/:$HOME/.config/composer/vendor/bin"
-export ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_HOME=$HOME/Library/Android/Sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
@@ -45,7 +48,8 @@ export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-export PATH=$PATH:/Users/kaan/Documents/jb
+export PATH=$PATH:/Users/kaan/Documents/jb # Jetbrains shortcuts
+export PATH="/opt/homebrew/opt/node@16/bin:$PATH"
 
 export REACT_EDITOR="code --wait"
 # export EDITOR="code --wait"
@@ -79,10 +83,7 @@ FZF_LINES=`expr $HEIGHT - 1`
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f ~/.kubectl_aliases ] && source ~/.kubectl_aliases
 
-# ? z completion
-if [ -f ${HOME}/scripts/bashs/z.sh ]; then
-    . ${HOME}/scripts/bashs/z.sh
-fi
+
 
 # ? This loads nvm
 export PATH=/home/$USER/.config/nvcode/utils/bin:$PATH
@@ -94,8 +95,6 @@ alias cp="cp -v"
 alias mv="mv -v" 
 alias rm="rm -v" 
 alias mkdir="mkdir -pv" 
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
 alias mkcd='{ IFS= read -r d && mkdir "$d" && cd "$_"; } <<<'
 alias l='exa --classify --grid --icons --group-directories-first --color-scale --color always'
 alias ll='exa --git --group-directories-first --classify --icons --color-scale --color always -laFm'
@@ -194,6 +193,7 @@ alias noded='docker run -ti --rm --network host  -v "${PWD}:/app"  mhart/alpine-
 alias alpp='docker run -ti --rm -v "${PWD}:/app" alpine:3.13 sh'
 alias goa='docker run -ti --rm --network host  -v "${PWD}:/app"  golang:1.16-alpine sh'
 alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:12-alpine sh'
+alias noded12='docker run -ti --rm --network host  -v "${PWD}:/app"  node:14 sh'
 alias phpim='docker run -ti --rm --network host  -v "$PWD:/app" laravelsail/php80-composer:latest bash'
 alias porta='docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data --rm portainer/portainer-ce && echo "http://localhost:9000"'
 alias drm='docker rm -f $(docker ps -aq) >/dev/null 2>&1 || true'
@@ -384,5 +384,34 @@ alias net="py3 /home/kaan/scripts/pythons/net.py"
 
 zle -N listFiles
 bindkey "^e" listFiles
-. $(brew --prefix)/etc/profile.d/z.sh
 export GPG_TTY=$(tty)
+
+ev(){
+  rm /Users/kaan/dockers/docker.sock
+  ssh -N -L localhost:2374:/var/run/docker.sock root@157.245.76.142  >/dev/null 2>&1 & 
+  disown
+  # export DOCKER_HOST=unix:///Users/kaan/dockers/docker.sock
+}
+
+git-cdc(){
+  #!/bin/bash
+  # commit
+  # date YYYY-mm-dd HH:MM:SS
+
+  commit="$1" datecal="$2"
+
+  date_timestamp=$(gdate -d "$datecal" +%s)
+  date_r=$(gdate -R -d "$datecal")
+
+  if [[ -z "$commit" ]]; then
+      exit 0
+  fi
+  cmd="GIT_COMMITTER_DATE=\"$date_timestamp\" GIT_AUTHOR_DATE=\"$date_timestamp\" git commit --amend --no-edit --date \"$date_r\""
+  git rebase --autostash --committer-date-is-author-date "$commit" --exec "$cmd"
+}
+
+eval "$(zoxide init zsh)"
+# zprof
+
+# Fig post block. Keep at the bottom of this file.
+. "$HOME/.fig/shell/zshrc.post.zsh"
